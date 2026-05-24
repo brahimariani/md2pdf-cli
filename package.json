@@ -1,0 +1,50 @@
+{
+  "name": "md2pdf-cli",
+  "version": "0.1.0",
+  "description": "Convert Markdown files to beautifully styled PDFs using marked and puppeteer.",
+  "keywords": [
+    "markdown",
+    "pdf",
+    "md-to-pdf",
+    "puppeteer",
+    "marked",
+    "katex",
+    "math",
+    "latex",
+    "equations",
+    "cli",
+    "converter"
+  ],
+  "license": "MIT",
+  "author": "Brahim Ariani <brahim.ariani.inc@gmail.com>",
+  "main": "lib/index.js",
+  "bin": {
+    "md2pdf": "bin/md2pdf.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node test/smoke.js"
+  },
+  "dependencies": {
+    "katex": "^0.16.9",
+    "marked": "^12.0.0",
+    "marked-katex-extension": "^5.0.0",
+    "puppeteer": "^24.15.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brahimariani/md2pdf-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brahimariani/md2pdf-cli/issues"
+  },
+  "homepage": "https://github.com/brahimariani/md2pdf-cli#readme"
+}
