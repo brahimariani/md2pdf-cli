@@ -7,13 +7,13 @@ GitHub-flavored Markdown, tables, code blocks, blockquotes, images **and LaTeX m
 ## Install
 
 ```bash
-npm install -g md2pdf-cli
+npm install -g @brahim.ariani/md2pdf-cli
 ```
 
 Or use it directly in a project:
 
 ```bash
-npm install md2pdf-cli
+npm install brahim.ariani/md2pdf-cli
 ```
 
 ## CLI
@@ -37,6 +37,8 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 | `--toc-title <text>`   | TOC heading text. Default: `Contents`                      |
 | `--highlight`          | Syntax-highlight fenced code blocks with Shiki             |
 | `--code-theme <name>`  | Shiki theme for code blocks. Default: `github-light`       |
+| `--mermaid`            | Render ` ```mermaid ` code blocks as diagrams              |
+| `--mermaid-theme <t>`  | Mermaid theme: `base`, `default`, `neutral`, `dark`, `forest`. Default: `base` |
 | `--cover`              | Render a title page from YAML front matter                 |
 | `--no-cover`           | Never render a title page (overrides front matter)         |
 | `--no-page-numbers`    | Disable the page-number footer                             |
@@ -101,7 +103,8 @@ Pick a built-in look with `--theme`:
 
 ```bash
 md2pdf report.md report.pdf --theme academic
-md2pdf thesis.md thesis.pdf --theme latex --toc --cover
+md2pdf thesis.md thesis.pdf --theme latex --toc
+md2pdf design.md design.pdf --mermaid --highlight --cover
 ```
 
 Every theme keeps the same structural rules (math, TOC, cover page, tables,
@@ -159,6 +162,32 @@ Only the languages actually used in the document are loaded, keeping conversion
 fast. Use any Shiki theme name (e.g. `github-light`, `github-dark`, `nord`,
 `dracula`, `min-light`). Unknown languages fall back to a plain, escaped code
 block, and an unknown theme falls back to `github-light`.
+
+## Mermaid diagrams
+
+With `--mermaid`, fenced code blocks tagged `mermaid` are rendered into vector
+diagrams with [Mermaid](https://mermaid.js.org/) (flowcharts, sequence diagrams,
+Gantt charts, etc.):
+
+````markdown
+```mermaid
+flowchart LR
+  A[Start] --> B{OK?}
+  B -- Yes --> C[Ship]
+  B -- No  --> A
+```
+````
+
+```bash
+md2pdf design.md design.pdf --mermaid
+md2pdf design.md design.pdf --mermaid --mermaid-theme neutral
+```
+
+Diagrams are rendered inside the same headless Chromium used for printing, so
+the resulting SVG is embedded directly in the PDF — no network access or extra
+tooling required. Mermaid runs with `securityLevel: 'strict'`, and a diagram
+with invalid syntax is skipped rather than aborting the whole conversion.
+Without `--mermaid`, ` ```mermaid ` blocks are left as plain code.
 
 ## Security / HTML sanitization
 
@@ -228,6 +257,8 @@ await convert({
 | `tocTitle`          | `string`                      | `'Contents'`           | TOC heading text                                       |
 | `highlight`         | `boolean`                     | `false`                | Syntax-highlight code blocks with Shiki                |
 | `codeTheme`         | `string`                      | `'github-light'`       | Shiki theme name for code blocks                       |
+| `mermaid`           | `boolean`                     | `false`                | Render `mermaid` code blocks as diagrams               |
+| `mermaidTheme`      | `string`                      | `'base'`               | Mermaid theme name (light by default)                  |
 | `cover`             | `boolean`                     | front matter           | Render a title page (`true`/`false` overrides YAML)    |
 | `headerTemplate`    | `string`                      | empty                  | Puppeteer header HTML                                  |
 | `footerTemplate`    | `string`                      | page numbers           | Puppeteer footer HTML                                  |

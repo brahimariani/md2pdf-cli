@@ -19,6 +19,8 @@ Options:
   --toc-title <text>    TOC heading text. Default: "Contents"
   --highlight           Syntax-highlight fenced code blocks (Shiki)
   --code-theme <name>   Shiki theme for code blocks. Default: github-light
+  --mermaid             Render mermaid fenced code blocks as diagrams
+  --mermaid-theme <t>   Mermaid theme: base, default, neutral, dark, forest. Default: base
   --cover               Render a title page from YAML front matter
   --no-cover            Never render a title page (overrides front matter)
   --no-page-numbers     Disable footer page numbers
@@ -45,6 +47,7 @@ function parseArgs(argv) {
     if (a === '--keep-html') { args.flags.keepHtml = true; continue; }
     if (a === '--toc') { args.flags.toc = true; continue; }
     if (a === '--highlight') { args.flags.highlight = true; continue; }
+    if (a === '--mermaid') { args.flags.mermaid = true; continue; }
     if (a === '--cover') { args.flags.cover = true; continue; }
     if (a === '--no-cover') { args.flags.cover = false; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
@@ -54,6 +57,7 @@ function parseArgs(argv) {
     if (a === '--toc-depth') { args.flags.tocDepth = parseInt(argv[++i], 10); continue; }
     if (a === '--toc-title') { args.flags.tocTitle = argv[++i]; continue; }
     if (a === '--code-theme') { args.flags.codeTheme = argv[++i]; continue; }
+    if (a === '--mermaid-theme') { args.flags.mermaidTheme = argv[++i]; continue; }
     if (a.startsWith('--')) {
       console.error(`Unknown option: ${a}`);
       process.exit(2);
@@ -100,6 +104,8 @@ function parseArgs(argv) {
       tocTitle: args.flags.tocTitle,
       highlight: !!args.flags.highlight,
       codeTheme: args.flags.codeTheme,
+      mermaid: !!args.flags.mermaid,
+      mermaidTheme: args.flags.mermaidTheme || 'base',
       cover: args.flags.cover,
       keepHtml: !!args.flags.keepHtml,
     });
