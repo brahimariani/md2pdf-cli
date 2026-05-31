@@ -31,6 +31,9 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 | `--title <text>`       | Document title (defaults to the input filename)            |
 | `--css <file>`         | Path to a custom CSS file (replaces the default styles)    |
 | `--format <size>`      | Page format: `A4`, `Letter`, `Legal`, ... Default: `A4`    |
+| `--toc`                | Prepend an auto-generated table of contents                |
+| `--toc-depth <n>`      | Deepest heading level included in the TOC. Default: `3`    |
+| `--toc-title <text>`   | TOC heading text. Default: `Contents`                      |
 | `--no-page-numbers`    | Disable the page-number footer                             |
 | `--no-math`            | Disable KaTeX equation rendering                           |
 | `--no-sanitize`        | Disable HTML sanitization (**unsafe**, see below)          |
@@ -44,6 +47,7 @@ md2pdf research.md
 md2pdf research.md out/research.pdf
 md2pdf report.md report.pdf --title "Quarterly Report" --css theme.css
 md2pdf notes.md notes.pdf --format Letter --no-page-numbers
+md2pdf book.md book.pdf --toc --toc-depth 2 --toc-title "Table of Contents"
 md2pdf paper.md paper.pdf            # equations rendered by default
 md2pdf draft.md draft.pdf --no-math  # treat $...$ as literal text
 ```
@@ -61,6 +65,21 @@ $$
 ```
 
 Equations are rendered server-side with KaTeX, so the PDF is self-contained and prints identically on any machine.
+
+## Table of contents
+
+Pass `--toc` to prepend an auto-generated, clickable table of contents built
+from the document headings. Each heading also receives a stable `id` slug, so
+the TOC links resolve as in-document bookmarks.
+
+```bash
+md2pdf report.md report.pdf --toc                       # depth 3 (default)
+md2pdf report.md report.pdf --toc --toc-depth 2         # only h1 + h2
+md2pdf report.md report.pdf --toc --toc-title "Sommaire"
+```
+
+The TOC is placed on its own page (it ends with a page break). You can fully
+restyle it via `--css` by targeting `nav.toc`, `nav.toc .toc-title`, etc.
 
 ## Security / HTML sanitization
 
@@ -103,6 +122,8 @@ await convert({
   format: 'A4',
   pageNumbers: true,
   sanitize: true,
+  toc: true,
+  tocDepth: 3,
 });
 ```
 
@@ -120,6 +141,9 @@ await convert({
 | `pageNumbers`       | `boolean`                     | `true`                 | Render `n / total` in the footer                       |
 | `math`              | `boolean`                     | `true`                 | Render `$...$` and `$$...$$` as KaTeX                  |
 | `sanitize`          | `boolean`                     | `true`                 | Sanitize generated HTML (strip scripts/handlers)       |
+| `toc`               | `boolean`                     | `false`                | Prepend an auto-generated table of contents            |
+| `tocDepth`          | `number`                      | `3`                    | Deepest heading level included in the TOC              |
+| `tocTitle`          | `string`                      | `'Contents'`           | TOC heading text                                       |
 | `headerTemplate`    | `string`                      | empty                  | Puppeteer header HTML                                  |
 | `footerTemplate`    | `string`                      | page numbers           | Puppeteer footer HTML                                  |
 | `puppeteerOptions`  | `object`                      | `{}`                   | Extra options passed to `puppeteer.launch`             |

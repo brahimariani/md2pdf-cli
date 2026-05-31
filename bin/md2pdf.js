@@ -12,6 +12,9 @@ Options:
   --title <text>        Document title (defaults to input filename)
   --css <file>          Path to a custom CSS file (replaces the default styles)
   --format <size>       Page format (A4, Letter, ...). Default: A4
+  --toc                 Prepend an auto-generated table of contents
+  --toc-depth <n>       Max heading level included in the TOC. Default: 3
+  --toc-title <text>    TOC heading text. Default: "Contents"
   --no-page-numbers     Disable footer page numbers
   --no-math             Disable KaTeX equation rendering ($...$ / $$...$$)
   --no-sanitize         Disable HTML sanitization (UNSAFE: allows raw HTML/scripts)
@@ -34,9 +37,12 @@ function parseArgs(argv) {
     if (a === '--no-math') { args.flags.math = false; continue; }
     if (a === '--no-sanitize' || a === '--unsafe') { args.flags.sanitize = false; continue; }
     if (a === '--keep-html') { args.flags.keepHtml = true; continue; }
+    if (a === '--toc') { args.flags.toc = true; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
     if (a === '--css') { args.flags.cssFile = argv[++i]; continue; }
     if (a === '--format') { args.flags.format = argv[++i]; continue; }
+    if (a === '--toc-depth') { args.flags.tocDepth = parseInt(argv[++i], 10); continue; }
+    if (a === '--toc-title') { args.flags.tocTitle = argv[++i]; continue; }
     if (a.startsWith('--')) {
       console.error(`Unknown option: ${a}`);
       process.exit(2);
@@ -69,6 +75,9 @@ function parseArgs(argv) {
       pageNumbers: args.flags.pageNumbers !== false,
       math: args.flags.math !== false,
       sanitize: args.flags.sanitize !== false,
+      toc: !!args.flags.toc,
+      tocDepth: Number.isInteger(args.flags.tocDepth) ? args.flags.tocDepth : 3,
+      tocTitle: args.flags.tocTitle,
       keepHtml: !!args.flags.keepHtml,
     });
     if (result.brokenImages && result.brokenImages.length) {

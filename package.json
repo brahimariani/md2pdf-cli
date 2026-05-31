@@ -31,8 +31,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node test/sanitize.js && node test/smoke.js",
-    "test:sanitize": "node test/sanitize.js"
+    "test": "node test/sanitize.js && node test/toc.js && node test/smoke.js",
+    "test:sanitize": "node test/sanitize.js",
+    "test:toc": "node test/toc.js"
   },
   "dependencies": {
     "dompurify": "^3.4.7",
