@@ -30,6 +30,7 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 |------------------------|------------------------------------------------------------|
 | `--title <text>`       | Document title (defaults to the input filename)            |
 | `--css <file>`         | Path to a custom CSS file (replaces the default styles)    |
+| `--theme <name>`       | Built-in theme: `default`, `academic`, `latex`             |
 | `--format <size>`      | Page format: `A4`, `Letter`, `Legal`, ... Default: `A4`    |
 | `--toc`                | Prepend an auto-generated table of contents                |
 | `--toc-depth <n>`      | Deepest heading level included in the TOC. Default: `3`    |
@@ -54,6 +55,7 @@ md2pdf notes.md notes.pdf --format Letter --no-page-numbers
 md2pdf book.md book.pdf --toc --toc-depth 2 --toc-title "Table of Contents"
 md2pdf code.md code.pdf --highlight --code-theme github-dark
 md2pdf paper.md paper.pdf --cover --toc
+md2pdf thesis.md thesis.pdf --theme academic --toc
 md2pdf paper.md paper.pdf            # equations rendered by default
 md2pdf draft.md draft.pdf --no-math  # treat $...$ as literal text
 ```
@@ -86,6 +88,26 @@ md2pdf report.md report.pdf --toc --toc-title "Sommaire"
 
 The TOC is placed on its own page (it ends with a page break). You can fully
 restyle it via `--css` by targeting `nav.toc`, `nav.toc .toc-title`, etc.
+
+## Themes
+
+Pick a built-in look with `--theme`:
+
+| Theme      | Description                                                          |
+|------------|----------------------------------------------------------------------|
+| `default`  | Clean sans-serif, navy headings, zebra tables (the original look)    |
+| `academic` | Georgia serif, justified & indented paragraphs, centered title       |
+| `latex`    | Classic LaTeX `article` look: Computer Modern serif, booktabs tables |
+
+```bash
+md2pdf report.md report.pdf --theme academic
+md2pdf thesis.md thesis.pdf --theme latex --toc --cover
+```
+
+Every theme keeps the same structural rules (math, TOC, cover page, tables,
+page-break safety) and only swaps typography and colors. An unknown theme name
+falls back to `default` with a warning. For full control, `--css` still
+replaces all styles entirely.
 
 ## Front matter & cover page
 
@@ -193,8 +215,9 @@ await convert({
 | `input`             | `string`                      | —                      | Path to a Markdown file (required)                     |
 | `output`            | `string`                      | —                      | Path to the output PDF (required)                      |
 | `title`             | `string`                      | input basename         | `<title>` of the generated HTML                        |
-| `css`               | `string`                      | bundled default        | Inline CSS string                                      |
-| `cssFile`           | `string`                      | —                      | Path to a CSS file (overrides `css`)                   |
+| `theme`             | `string`                      | `'default'`            | Built-in theme: `default`/`academic`/`latex`           |
+| `css`               | `string`                      | bundled default        | Inline CSS string (overrides `theme`)                  |
+| `cssFile`           | `string`                      | —                      | Path to a CSS file (overrides `css` and `theme`)       |
 | `format`            | `string`                      | `'A4'`                 | Puppeteer page format                                  |
 | `margin`            | `object`                      | 22mm / 18mm            | `{ top, bottom, left, right }`                         |
 | `pageNumbers`       | `boolean`                     | `true`                 | Render `n / total` in the footer                       |

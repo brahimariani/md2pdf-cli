@@ -3,6 +3,7 @@
 
 const path = require('path');
 const { convert } = require('../lib/index');
+const { listThemes } = require('../lib/styles');
 
 function printUsage() {
   console.log(`Usage:
@@ -11,6 +12,7 @@ function printUsage() {
 Options:
   --title <text>        Document title (defaults to input filename)
   --css <file>          Path to a custom CSS file (replaces the default styles)
+  --theme <name>        Built-in theme: default, academic, latex
   --format <size>       Page format (A4, Letter, ...). Default: A4
   --toc                 Prepend an auto-generated table of contents
   --toc-depth <n>       Max heading level included in the TOC. Default: 3
@@ -47,6 +49,7 @@ function parseArgs(argv) {
     if (a === '--no-cover') { args.flags.cover = false; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
     if (a === '--css') { args.flags.cssFile = argv[++i]; continue; }
+    if (a === '--theme') { args.flags.theme = argv[++i]; continue; }
     if (a === '--format') { args.flags.format = argv[++i]; continue; }
     if (a === '--toc-depth') { args.flags.tocDepth = parseInt(argv[++i], 10); continue; }
     if (a === '--toc-title') { args.flags.tocTitle = argv[++i]; continue; }
@@ -73,12 +76,21 @@ function parseArgs(argv) {
     args.positional[1] ||
     input.replace(/\.md$/i, '') + '.pdf';
 
+  if (args.flags.theme && !listThemes().includes(args.flags.theme)) {
+    console.warn(
+      `WARNING: unknown theme "${args.flags.theme}", falling back to "default". ` +
+        `Available: ${listThemes().join(', ')}`
+    );
+    args.flags.theme = 'default';
+  }
+
   try {
     const result = await convert({
       input,
       output,
       title: args.flags.title,
       cssFile: args.flags.cssFile,
+      theme: args.flags.theme || 'default',
       format: args.flags.format || 'A4',
       pageNumbers: args.flags.pageNumbers !== false,
       math: args.flags.math !== false,
