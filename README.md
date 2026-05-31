@@ -36,6 +36,8 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 | `--toc-title <text>`   | TOC heading text. Default: `Contents`                      |
 | `--highlight`          | Syntax-highlight fenced code blocks with Shiki             |
 | `--code-theme <name>`  | Shiki theme for code blocks. Default: `github-light`       |
+| `--cover`              | Render a title page from YAML front matter                 |
+| `--no-cover`           | Never render a title page (overrides front matter)         |
 | `--no-page-numbers`    | Disable the page-number footer                             |
 | `--no-math`            | Disable KaTeX equation rendering                           |
 | `--no-sanitize`        | Disable HTML sanitization (**unsafe**, see below)          |
@@ -51,6 +53,7 @@ md2pdf report.md report.pdf --title "Quarterly Report" --css theme.css
 md2pdf notes.md notes.pdf --format Letter --no-page-numbers
 md2pdf book.md book.pdf --toc --toc-depth 2 --toc-title "Table of Contents"
 md2pdf code.md code.pdf --highlight --code-theme github-dark
+md2pdf paper.md paper.pdf --cover --toc
 md2pdf paper.md paper.pdf            # equations rendered by default
 md2pdf draft.md draft.pdf --no-math  # treat $...$ as literal text
 ```
@@ -83,6 +86,40 @@ md2pdf report.md report.pdf --toc --toc-title "Sommaire"
 
 The TOC is placed on its own page (it ends with a page break). You can fully
 restyle it via `--css` by targeting `nav.toc`, `nav.toc .toc-title`, etc.
+
+## Front matter & cover page
+
+Markdown files may start with a YAML front-matter block. It is parsed, stripped
+from the body, and used to enrich the document:
+
+```markdown
+---
+title: Quarterly Report
+subtitle: Q2 2026 Financial Overview
+author:
+  - Brahim Ariani
+  - Finance Team
+date: 2026-05-31
+cover: true
+---
+
+# Introduction
+...
+```
+
+- `title` becomes the HTML document title (a `--title` flag still wins).
+- With `--cover` (or `cover: true` in the front matter), a dedicated **title
+  page** is rendered from `title`, `subtitle`, `author`/`authors` and `date`,
+  followed by a page break. `--no-cover` disables it even if the front matter
+  requests one.
+
+```bash
+md2pdf paper.md paper.pdf --cover
+md2pdf paper.md paper.pdf --cover --toc   # title page, then a TOC page
+```
+
+Restyle the cover via `--css` by targeting `section.cover`, `.cover-title`,
+`.cover-subtitle`, `.cover-author`, `.cover-date`.
 
 ## Syntax highlighting
 
@@ -168,6 +205,7 @@ await convert({
 | `tocTitle`          | `string`                      | `'Contents'`           | TOC heading text                                       |
 | `highlight`         | `boolean`                     | `false`                | Syntax-highlight code blocks with Shiki                |
 | `codeTheme`         | `string`                      | `'github-light'`       | Shiki theme name for code blocks                       |
+| `cover`             | `boolean`                     | front matter           | Render a title page (`true`/`false` overrides YAML)    |
 | `headerTemplate`    | `string`                      | empty                  | Puppeteer header HTML                                  |
 | `footerTemplate`    | `string`                      | page numbers           | Puppeteer footer HTML                                  |
 | `puppeteerOptions`  | `object`                      | `{}`                   | Extra options passed to `puppeteer.launch`             |

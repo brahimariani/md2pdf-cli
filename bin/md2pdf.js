@@ -17,6 +17,8 @@ Options:
   --toc-title <text>    TOC heading text. Default: "Contents"
   --highlight           Syntax-highlight fenced code blocks (Shiki)
   --code-theme <name>   Shiki theme for code blocks. Default: github-light
+  --cover               Render a title page from YAML front matter
+  --no-cover            Never render a title page (overrides front matter)
   --no-page-numbers     Disable footer page numbers
   --no-math             Disable KaTeX equation rendering ($...$ / $$...$$)
   --no-sanitize         Disable HTML sanitization (UNSAFE: allows raw HTML/scripts)
@@ -41,6 +43,8 @@ function parseArgs(argv) {
     if (a === '--keep-html') { args.flags.keepHtml = true; continue; }
     if (a === '--toc') { args.flags.toc = true; continue; }
     if (a === '--highlight') { args.flags.highlight = true; continue; }
+    if (a === '--cover') { args.flags.cover = true; continue; }
+    if (a === '--no-cover') { args.flags.cover = false; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
     if (a === '--css') { args.flags.cssFile = argv[++i]; continue; }
     if (a === '--format') { args.flags.format = argv[++i]; continue; }
@@ -84,6 +88,7 @@ function parseArgs(argv) {
       tocTitle: args.flags.tocTitle,
       highlight: !!args.flags.highlight,
       codeTheme: args.flags.codeTheme,
+      cover: args.flags.cover,
       keepHtml: !!args.flags.keepHtml,
     });
     if (result.brokenImages && result.brokenImages.length) {

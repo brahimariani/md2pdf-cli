@@ -31,13 +31,15 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node test/sanitize.js && node test/toc.js && node test/highlight.js && node test/smoke.js",
+    "test": "node test/sanitize.js && node test/toc.js && node test/highlight.js && node test/frontmatter.js && node test/smoke.js",
     "test:sanitize": "node test/sanitize.js",
     "test:toc": "node test/toc.js",
-    "test:highlight": "node test/highlight.js"
+    "test:highlight": "node test/highlight.js",
+    "test:frontmatter": "node test/frontmatter.js"
   },
   "dependencies": {
     "dompurify": "^3.4.7",
+    "gray-matter": "^4.0.3",
     "jsdom": "^29.1.1",
     "katex": "^0.16.9",
     "marked": "^12.0.0",
