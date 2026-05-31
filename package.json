@@ -1,6 +1,6 @@
 {
   "name": "@brahim.ariani/md2pdf-cli",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Convert Markdown files to beautifully styled PDFs using marked and puppeteer.",
   "keywords": [
     "markdown",
