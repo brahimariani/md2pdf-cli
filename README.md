@@ -34,6 +34,8 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 | `--toc`                | Prepend an auto-generated table of contents                |
 | `--toc-depth <n>`      | Deepest heading level included in the TOC. Default: `3`    |
 | `--toc-title <text>`   | TOC heading text. Default: `Contents`                      |
+| `--highlight`          | Syntax-highlight fenced code blocks with Shiki             |
+| `--code-theme <name>`  | Shiki theme for code blocks. Default: `github-light`       |
 | `--no-page-numbers`    | Disable the page-number footer                             |
 | `--no-math`            | Disable KaTeX equation rendering                           |
 | `--no-sanitize`        | Disable HTML sanitization (**unsafe**, see below)          |
@@ -48,6 +50,7 @@ md2pdf research.md out/research.pdf
 md2pdf report.md report.pdf --title "Quarterly Report" --css theme.css
 md2pdf notes.md notes.pdf --format Letter --no-page-numbers
 md2pdf book.md book.pdf --toc --toc-depth 2 --toc-title "Table of Contents"
+md2pdf code.md code.pdf --highlight --code-theme github-dark
 md2pdf paper.md paper.pdf            # equations rendered by default
 md2pdf draft.md draft.pdf --no-math  # treat $...$ as literal text
 ```
@@ -80,6 +83,23 @@ md2pdf report.md report.pdf --toc --toc-title "Sommaire"
 
 The TOC is placed on its own page (it ends with a page break). You can fully
 restyle it via `--css` by targeting `nav.toc`, `nav.toc .toc-title`, etc.
+
+## Syntax highlighting
+
+Pass `--highlight` to colorize fenced code blocks with
+[Shiki](https://shiki.style/) (the same engine that powers VS Code). Colors are
+inlined into the HTML, so the PDF stays self-contained and prints identically
+everywhere — no client-side JavaScript or web fonts required.
+
+```bash
+md2pdf code.md code.pdf --highlight
+md2pdf code.md code.pdf --highlight --code-theme github-dark
+```
+
+Only the languages actually used in the document are loaded, keeping conversion
+fast. Use any Shiki theme name (e.g. `github-light`, `github-dark`, `nord`,
+`dracula`, `min-light`). Unknown languages fall back to a plain, escaped code
+block, and an unknown theme falls back to `github-light`.
 
 ## Security / HTML sanitization
 
@@ -124,6 +144,8 @@ await convert({
   sanitize: true,
   toc: true,
   tocDepth: 3,
+  highlight: true,
+  codeTheme: 'github-light',
 });
 ```
 
@@ -144,6 +166,8 @@ await convert({
 | `toc`               | `boolean`                     | `false`                | Prepend an auto-generated table of contents            |
 | `tocDepth`          | `number`                      | `3`                    | Deepest heading level included in the TOC              |
 | `tocTitle`          | `string`                      | `'Contents'`           | TOC heading text                                       |
+| `highlight`         | `boolean`                     | `false`                | Syntax-highlight code blocks with Shiki                |
+| `codeTheme`         | `string`                      | `'github-light'`       | Shiki theme name for code blocks                       |
 | `headerTemplate`    | `string`                      | empty                  | Puppeteer header HTML                                  |
 | `footerTemplate`    | `string`                      | page numbers           | Puppeteer footer HTML                                  |
 | `puppeteerOptions`  | `object`                      | `{}`                   | Extra options passed to `puppeteer.launch`             |

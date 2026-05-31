@@ -15,6 +15,8 @@ Options:
   --toc                 Prepend an auto-generated table of contents
   --toc-depth <n>       Max heading level included in the TOC. Default: 3
   --toc-title <text>    TOC heading text. Default: "Contents"
+  --highlight           Syntax-highlight fenced code blocks (Shiki)
+  --code-theme <name>   Shiki theme for code blocks. Default: github-light
   --no-page-numbers     Disable footer page numbers
   --no-math             Disable KaTeX equation rendering ($...$ / $$...$$)
   --no-sanitize         Disable HTML sanitization (UNSAFE: allows raw HTML/scripts)
@@ -38,11 +40,13 @@ function parseArgs(argv) {
     if (a === '--no-sanitize' || a === '--unsafe') { args.flags.sanitize = false; continue; }
     if (a === '--keep-html') { args.flags.keepHtml = true; continue; }
     if (a === '--toc') { args.flags.toc = true; continue; }
+    if (a === '--highlight') { args.flags.highlight = true; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
     if (a === '--css') { args.flags.cssFile = argv[++i]; continue; }
     if (a === '--format') { args.flags.format = argv[++i]; continue; }
     if (a === '--toc-depth') { args.flags.tocDepth = parseInt(argv[++i], 10); continue; }
     if (a === '--toc-title') { args.flags.tocTitle = argv[++i]; continue; }
+    if (a === '--code-theme') { args.flags.codeTheme = argv[++i]; continue; }
     if (a.startsWith('--')) {
       console.error(`Unknown option: ${a}`);
       process.exit(2);
@@ -78,6 +82,8 @@ function parseArgs(argv) {
       toc: !!args.flags.toc,
       tocDepth: Number.isInteger(args.flags.tocDepth) ? args.flags.tocDepth : 3,
       tocTitle: args.flags.tocTitle,
+      highlight: !!args.flags.highlight,
+      codeTheme: args.flags.codeTheme,
       keepHtml: !!args.flags.keepHtml,
     });
     if (result.brokenImages && result.brokenImages.length) {
