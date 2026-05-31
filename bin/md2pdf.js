@@ -14,6 +14,7 @@ Options:
   --format <size>       Page format (A4, Letter, ...). Default: A4
   --no-page-numbers     Disable footer page numbers
   --no-math             Disable KaTeX equation rendering ($...$ / $$...$$)
+  --no-sanitize         Disable HTML sanitization (UNSAFE: allows raw HTML/scripts)
   --keep-html           Keep the intermediate .tmp.html file
   -h, --help            Show this help
 
@@ -31,6 +32,7 @@ function parseArgs(argv) {
     if (a === '-h' || a === '--help') { args.flags.help = true; continue; }
     if (a === '--no-page-numbers') { args.flags.pageNumbers = false; continue; }
     if (a === '--no-math') { args.flags.math = false; continue; }
+    if (a === '--no-sanitize' || a === '--unsafe') { args.flags.sanitize = false; continue; }
     if (a === '--keep-html') { args.flags.keepHtml = true; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
     if (a === '--css') { args.flags.cssFile = argv[++i]; continue; }
@@ -66,6 +68,7 @@ function parseArgs(argv) {
       format: args.flags.format || 'A4',
       pageNumbers: args.flags.pageNumbers !== false,
       math: args.flags.math !== false,
+      sanitize: args.flags.sanitize !== false,
       keepHtml: !!args.flags.keepHtml,
     });
     if (result.brokenImages && result.brokenImages.length) {

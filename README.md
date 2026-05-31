@@ -33,6 +33,7 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 | `--format <size>`      | Page format: `A4`, `Letter`, `Legal`, ... Default: `A4`    |
 | `--no-page-numbers`    | Disable the page-number footer                             |
 | `--no-math`            | Disable KaTeX equation rendering                           |
+| `--no-sanitize`        | Disable HTML sanitization (**unsafe**, see below)          |
 | `--keep-html`          | Keep the intermediate `.tmp.html` file for debugging       |
 | `-h`, `--help`         | Show usage                                                 |
 
@@ -61,6 +62,33 @@ $$
 
 Equations are rendered server-side with KaTeX, so the PDF is self-contained and prints identically on any machine.
 
+## Security / HTML sanitization
+
+Markdown allows raw HTML, which means an untrusted `.md` file can embed
+`<script>`, `<iframe>`, or event-handler attributes (`onerror`, `onclick`, ...).
+Because the document is rendered through a real browser (Chromium) before being
+printed, such payloads would otherwise execute.
+
+To prevent this, the HTML produced from your Markdown is **sanitized by default**
+with [DOMPurify](https://github.com/cure53/DOMPurify) before it ever reaches the
+browser. Scripts, event handlers, and dangerous URIs (`javascript:`, ...) are
+stripped, while legitimate content — headings, tables, code blocks, images,
+links and KaTeX/MathML/SVG math — is preserved.
+
+If you fully trust the input and need to keep raw HTML (custom `<script>`,
+embeds, etc.), you can opt out:
+
+```bash
+md2pdf trusted.md trusted.pdf --no-sanitize
+```
+
+```js
+await convert({ input: 'trusted.md', output: 'trusted.pdf', sanitize: false });
+```
+
+> Only disable sanitization for content you control. Never run `--no-sanitize`
+> on files from untrusted sources.
+
 ## Programmatic API
 
 ```js
@@ -74,6 +102,7 @@ await convert({
   // css: '/* inline CSS string */',
   format: 'A4',
   pageNumbers: true,
+  sanitize: true,
 });
 ```
 
@@ -90,6 +119,7 @@ await convert({
 | `margin`            | `object`                      | 22mm / 18mm            | `{ top, bottom, left, right }`                         |
 | `pageNumbers`       | `boolean`                     | `true`                 | Render `n / total` in the footer                       |
 | `math`              | `boolean`                     | `true`                 | Render `$...$` and `$$...$$` as KaTeX                  |
+| `sanitize`          | `boolean`                     | `true`                 | Sanitize generated HTML (strip scripts/handlers)       |
 | `headerTemplate`    | `string`                      | empty                  | Puppeteer header HTML                                  |
 | `footerTemplate`    | `string`                      | page numbers           | Puppeteer footer HTML                                  |
 | `puppeteerOptions`  | `object`                      | `{}`                   | Extra options passed to `puppeteer.launch`             |
