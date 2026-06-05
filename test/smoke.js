@@ -10,7 +10,12 @@ const { convert } = require('../lib/index');
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
   const output = path.join(outputDir, 'sample.pdf');
 
-  const result = await convert({ input, output, title: 'Smoke Test' });
+  const result = await convert({
+    input,
+    output,
+    title: 'Smoke Test',
+    headerLogos: true,
+  });
 
   const stat = fs.statSync(result.output);
   if (stat.size < 1024) {

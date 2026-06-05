@@ -41,6 +41,7 @@ If `output.pdf` is omitted, the output filename is derived from the input (e.g. 
 | `--mermaid-theme <t>`  | Mermaid theme: `base`, `default`, `neutral`, `dark`, `forest`. Default: `base` |
 | `--cover`              | Render a title page from YAML front matter                 |
 | `--no-cover`           | Never render a title page (overrides front matter)         |
+| `--header-logos`       | Repeat the cover logos in every page header (skips the cover) |
 | `--no-page-numbers`    | Disable the page-number footer                             |
 | `--no-math`            | Disable KaTeX equation rendering                           |
 | `--no-sanitize`        | Disable HTML sanitization (**unsafe**, see below)          |
@@ -125,6 +126,7 @@ author:
   - Brahim Ariani
   - Finance Team
 date: 2026-05-31
+version: 2.1.0
 cover: true
 ---
 
@@ -134,17 +136,72 @@ cover: true
 
 - `title` becomes the HTML document title (a `--title` flag still wins).
 - With `--cover` (or `cover: true` in the front matter), a dedicated **title
-  page** is rendered from `title`, `subtitle`, `author`/`authors` and `date`,
-  followed by a page break. `--no-cover` disables it even if the front matter
-  requests one.
+  page** is rendered from `title`, `subtitle`, `version`, `author`/`authors` and
+  `date`, followed by a page break. `--no-cover` disables it even if the front
+  matter requests one.
 
 ```bash
 md2pdf paper.md paper.pdf --cover
 md2pdf paper.md paper.pdf --cover --toc   # title page, then a TOC page
 ```
 
-Restyle the cover via `--css` by targeting `section.cover`, `.cover-title`,
-`.cover-subtitle`, `.cover-author`, `.cover-date`.
+### Cover layout & images
+
+For full control over the cover layout, design and image placement, use the
+**object form** of `cover` instead of `cover: true`:
+
+```markdown
+---
+title: Quarterly Report
+subtitle: Q2 2026 Financial Overview
+version: 2.1.0
+author: Brahim Ariani
+date: 2026-05-31
+cover:
+  logos:                     # up to 3 logos, spread across the top
+    - assets/logo-left.svg
+    - assets/logo-right.svg
+  image: assets/hero.png     # illustration shown above the title
+  align: center              # vertical placement: top | center | bottom | between
+  # background: true         # use `image` as a full-bleed background instead
+---
+```
+
+Cover-specific keys (all optional):
+
+| Key          | Type                | Effect                                                                  |
+| ------------ | ------------------- | ----------------------------------------------------------------------- |
+| `enabled`    | `boolean`           | Set `false` to keep the config but skip the cover                       |
+| `logo`       | `string`            | A single logo (centered above everything else)                          |
+| `logos`      | `string[]`          | Up to **3** logos laid out as a top row with even spacing               |
+| `image`      | `string`            | Path or URL to a cover illustration shown between the logos and title   |
+| `background` | `boolean`           | Render `image` as a full-bleed background layer behind the text         |
+| `align`      | `string`            | Vertical placement: `top`, `center` (default), `bottom` or `between`    |
+| `version`    | `string`            | Version line (also accepted as a top-level `version:` key)              |
+
+Image paths are resolved relative to the Markdown file; remote (`https://`) and
+`data:` URLs are used as-is. A single `logo` (or one entry in `logos`) is
+centered; two or three logos are spread across the top with `space-between`.
+
+### Logos in the page header
+
+Pass `--header-logos` to repeat the cover logos at the top of **every page**.
+The logos are inlined as data URIs (so they reliably render inside the header)
+and aligned with the body margins.
+
+```bash
+md2pdf paper.md paper.pdf --cover --header-logos
+```
+
+When a cover page is present alongside a header/footer, the cover is rendered on
+its own and merged ahead of the body, so its **header and footer are fully
+suppressed**: the cover carries **no page number** and no header logos. Page
+numbering and the header logos start on the first content page at `1`.
+
+Restyle the cover via `--css` by targeting `section.cover` (and its
+`.cover-align-*` / `.cover-bg` modifiers), `.cover-content`, `.cover-logos`,
+`.cover-logo`, `.cover-image`, `.cover-bg-image`, `.cover-title`,
+`.cover-subtitle`, `.cover-version`, `.cover-author`, `.cover-date`.
 
 ## Syntax highlighting
 
@@ -260,6 +317,7 @@ await convert({
 | `mermaid`           | `boolean`                     | `false`                | Render `mermaid` code blocks as diagrams               |
 | `mermaidTheme`      | `string`                      | `'base'`               | Mermaid theme name (light by default)                  |
 | `cover`             | `boolean`                     | front matter           | Render a title page (`true`/`false` overrides YAML)    |
+| `headerLogos`       | `boolean`                     | `false`                | Repeat the cover logos in every page header            |
 | `headerTemplate`    | `string`                      | empty                  | Puppeteer header HTML                                  |
 | `footerTemplate`    | `string`                      | page numbers           | Puppeteer footer HTML                                  |
 | `puppeteerOptions`  | `object`                      | `{}`                   | Extra options passed to `puppeteer.launch`             |

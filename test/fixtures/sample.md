@@ -5,7 +5,12 @@ author:
   - Brahim Ariani
   - md2pdf contributors
 date: 2026-05-31
-cover: true
+version: 1.2.2
+cover:
+  logos:
+    - logo-1.svg
+    - logo-2.svg
+  align: between
 ---
 
 # Introduction

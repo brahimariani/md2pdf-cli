@@ -23,6 +23,7 @@ Options:
   --mermaid-theme <t>   Mermaid theme: base, default, neutral, dark, forest. Default: base
   --cover               Render a title page from YAML front matter
   --no-cover            Never render a title page (overrides front matter)
+  --header-logos        Repeat the cover logos in every page header (skips the cover)
   --no-page-numbers     Disable footer page numbers
   --no-math             Disable KaTeX equation rendering ($...$ / $$...$$)
   --no-sanitize         Disable HTML sanitization (UNSAFE: allows raw HTML/scripts)
@@ -50,6 +51,7 @@ function parseArgs(argv) {
     if (a === '--mermaid') { args.flags.mermaid = true; continue; }
     if (a === '--cover') { args.flags.cover = true; continue; }
     if (a === '--no-cover') { args.flags.cover = false; continue; }
+    if (a === '--header-logos') { args.flags.headerLogos = true; continue; }
     if (a === '--title') { args.flags.title = argv[++i]; continue; }
     if (a === '--css') { args.flags.cssFile = argv[++i]; continue; }
     if (a === '--theme') { args.flags.theme = argv[++i]; continue; }
@@ -107,6 +109,7 @@ function parseArgs(argv) {
       mermaid: !!args.flags.mermaid,
       mermaidTheme: args.flags.mermaidTheme || 'base',
       cover: args.flags.cover,
+      headerLogos: !!args.flags.headerLogos,
       keepHtml: !!args.flags.keepHtml,
     });
     if (result.brokenImages && result.brokenImages.length) {
